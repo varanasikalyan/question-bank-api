@@ -10,6 +10,7 @@
 # Sample JSON: {"option":"Option 2","question_id":1,"is_correct_option":0}
 #-------------------------------------------------------------------------------
 from root import db
+from datetime import datetime
 
 class Options(db.Model):
     __tablename__ =  "options"
@@ -17,6 +18,9 @@ class Options(db.Model):
     option = db.Column(db.String(200), nullable=False)
     question_id = db.Column(db.Integer, db.ForeignKey('questions.id'), nullable=False)
     is_correct_option = db.Column(db.Integer, nullable=False, default=0)
+    insert_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
+    update_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
+
 
     def __rept__(self):
         return "'id': {0}, 'option': {1}, 'question_id': {2}".format(self.id, self.option, self.question_id)
@@ -55,7 +59,9 @@ class Options(db.Model):
             'id' : self.id,
             'option' : self.option,
             'question_id' : self.question_id,
-            'is_correct_option' : self.is_correct_option
+            'is_correct_option' : self.is_correct_option,
+            'insert_date': str(self.insert_date),
+            'update_date': str(self.update_date)
         }
         return json_option
 

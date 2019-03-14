@@ -16,7 +16,8 @@ def get_token():
 				"status": "success",
 				"message": "Login Success.",
 				"auth_token": auth_token.decode(),
-				"username": user.username
+				"username": user.username,
+				"user": user.get_user()
 			}
 			return Response(dumps(responseObject), 201, mimetype="application/json")
 		else:

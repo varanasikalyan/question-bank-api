@@ -50,7 +50,7 @@ def api_questions_via_id(id):
     return Response(dumps(responseObject), 200, mimetype='application/json')
 
 @application.route("/api/v1/questions", methods=["POST"])
-@token_required
+#@token_required
 def api_add_question():
     request_data = request.get_json()
     if(Questions.validate_question(request_data)):

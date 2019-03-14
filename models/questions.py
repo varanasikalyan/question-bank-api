@@ -11,12 +11,15 @@
 #-------------------------------------------------------------------------------
 from root import db
 from models.options import Options
+from datetime import datetime
 
 class Questions(db.Model):
     __tablename__ =  "questions"
     id = db.Column(db.Integer, primary_key=True)
     question = db.Column(db.String(2000), nullable=False)
     options = db.relationship('Options', backref='enquiry', lazy=True)
+    insert_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
+    update_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
 
     def __repr__(self):
         return '{"id":{0}, "question":{1}}'.format(self.id, self.question)
@@ -58,6 +61,8 @@ class Questions(db.Model):
         json_question = {
         'id' : self.id ,
         'question' : self.question,
+        'insert_date': str(self.insert_date),
+        'update_date': str(self.update_date),
         'options' : Options.serialize_all(self.options)
         }
         return json_question
