@@ -16,7 +16,11 @@ from datetime import datetime
 class Questions(db.Model):
     __tablename__ =  "questions"
     id = db.Column(db.Integer, primary_key=True)
-    question = db.Column(db.String(2000), nullable=False)
+    module_id = db.Column(db.Integer, nullable=False)
+    question_type = db.Column(db.Integer, nullable=False)
+    creator_id = db.Column(db.Integer, nullable=False)    
+    is_active = db.Column(db.Boolean, default=True)
+    question = db.Column(db.String(2000), nullable=False)    
     options = db.relationship('Options', backref='enquiry', lazy=True)
     insert_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
     update_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
@@ -50,6 +54,9 @@ class Questions(db.Model):
     @classmethod
     def submit_question_from_json(classname, json_question):
         question = classname(question=json_question['question'])
+        question.module_id = int(json_question['module_id'])
+        question.creator_id = int(json_question['creator_id'])
+        question.question_type = int(json_question['question_type'])
         db.session.add(question)
         db.session.commit()
         #todo: make options and question creation atomic
@@ -59,17 +66,21 @@ class Questions(db.Model):
     #todo:json encoding needed
     def serialize(self):
         json_question = {
-        'id' : self.id ,
-        'question' : self.question,
-        'insert_date': str(self.insert_date),
-        'update_date': str(self.update_date),
-        'options' : Options.serialize_all(self.options)
+            'id' : self.id ,
+            'module_id': self.module_id,
+            'question_type': self.question_type,
+            'creator_id': self.creator_id,
+            'is_active': self.is_active,
+            'question' : self.question,
+            'insert_date': str(self.insert_date),
+            'update_date': str(self.update_date),
+            'options' : Options.serialize_all(self.options)
         }
         return json_question
 
     @staticmethod
     def validate_question(question):
-        if ('question' in question):
+        if ('question' in question and 'module_id' in question and 'question_type' in question):
             return True
         else:
             return False

@@ -30,7 +30,7 @@ class Modules(db.Model):
     @classmethod
     def get_all_modules(classname):
         modules_list = Modules.query.all()
-        modules = [module.serialize() for module in modules_list]
+        modules = [module.brief() for module in modules_list]
         return modules
 
     @classmethod
@@ -39,18 +39,18 @@ class Modules(db.Model):
             modules_list = Modules.query.order_by(classname.insert_date.desc()).limit(_count)
         else: 
             modules_list = Modules.query.filter_by(creator_id=id).order_by(classname.insert_date.desc()).limit(_count)
-        modules = [module.serialize() for module in modules_list]
+        modules = [module.brief() for module in modules_list]
         return modules
 
     @classmethod
     def get_module_from_id(classname, id):
         module = classname.query.get(id)
-        return module
+        return module.serialize()
 
     @classmethod
     def get_module_from_creator_id(classname, id):
         modules_list = classname.query.filter_by(creator_id=id)
-        modules = [module.serialize() for module in modules_list]
+        modules = [module.brief() for module in modules_list]
         return modules
 
     @classmethod
@@ -76,14 +76,22 @@ class Modules(db.Model):
     #todo:json encoding needed
     def serialize(self):
         json_module = {
-        'id' : self.id ,
-        'module' : self.module,
-        'parent_module_id' : self.parent_module_id,
-        'description': self.description,
-        'creator_id': self.creator_id,
-        'is_active': self.is_active,
-        'insert_date': str(self.insert_date),
-        'update_date': str(self.update_date)
+            'id' : self.id ,
+            'module' : self.module,
+            'parent_module_id' : self.parent_module_id,
+            'description': self.description,
+            'creator_id': self.creator_id,
+            'is_active': self.is_active,
+            'insert_date': str(self.insert_date),
+            'update_date': str(self.update_date)
+        }
+        return json_module
+
+    def brief(self):
+        json_module = {
+            'id' : self.id ,
+            'module' : self.module,
+            'description': self.description            
         }
         return json_module
 

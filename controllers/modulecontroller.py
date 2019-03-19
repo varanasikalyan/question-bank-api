@@ -46,7 +46,7 @@ def api_modules():
     responseObject = {
         "status": "success",
         "message": "Module retrieved successfully.",            
-        "module": module.serialize()
+        "module": module
     }
     return Response(dumps(responseObject), 200, mimetype='application/json')
 
